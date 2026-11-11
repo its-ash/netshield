@@ -1,0 +1,269 @@
+<!doctype html>
+<!-- NetShield landing page (custom). Download links point at the latest GitHub release asset netshield.apk. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetShield: block ads and trackers in every Android app</title>
+<meta name="description" content="NetShield blocks ads, trackers and malware in every app and browser on your Android phone with a private on-phone DNS filter. Free, open source, no account.">
+<meta name="theme-color" content="#0F172A">
+<meta property="og:title" content="NetShield: block ads and trackers in every Android app">
+<meta property="og:description" content="A private on-phone DNS filter for Android. Free, open source, no account.">
+<meta property="og:image" content="https://netshield.itsash.in/assets/icon/logo-1024.png">
+<link rel="icon" href="assets/icon/logo-1024.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0F172A; --bg2: #111C33; --card: #16213B; --line: #24314F;
+    --text: #E6EDF7; --muted: #9AA8C1; --mint: #34D399; --mint-dim: #1F7A5C; --red: #F87171;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.6 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  a { color: var(--mint); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  .pixel { shape-rendering: crispEdges; display: block; }
+
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(15,23,42,.88); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 18px; }
+  .brand:hover { text-decoration: none; }
+  .brand svg { width: 30px; height: 30px; border-radius: 7px; }
+  .links { display: flex; gap: 22px; font-size: 14px; }
+  .links a { color: var(--muted); }
+  .links a:hover { color: var(--text); text-decoration: none; }
+
+  .hero { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: center; padding: 80px 0 64px; }
+  .eyebrow { display: inline-flex; gap: 8px; align-items: center; font: 500 12px "JetBrains Mono", monospace; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--mint); border: 1px solid var(--mint-dim); border-radius: 999px; padding: 4px 12px; }
+  h1 { font-size: clamp(2.4rem, 5.5vw, 4rem); line-height: 1.05; margin: 20px 0 18px; font-weight: 800; letter-spacing: -.02em; }
+  h1 em { font-style: normal; color: var(--mint); }
+  .lead { color: var(--muted); font-size: 18px; max-width: 34em; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 10px; font-weight: 600; border: 1px solid var(--line); color: var(--text); }
+  .btn:hover { text-decoration: none; border-color: var(--muted); }
+  .btn.primary { background: var(--mint); color: #062A1E; border-color: var(--mint); }
+  .btn.primary:hover { background: #4ADEA9; }
+  .btn svg { width: 20px; height: 20px; }
+  .meta { margin-top: 16px; color: var(--muted); font-size: 13px; }
+  .meta b { color: var(--text); font-weight: 600; }
+  .art { display: grid; place-items: center; }
+  .art svg { width: min(340px, 80%); height: auto; border-radius: 48px; box-shadow: 0 30px 80px rgba(52,211,153,.18); }
+
+  .counter { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 96px; }
+  .counter div { padding: 22px; background: var(--bg2); }
+  .counter div + div { border-left: 1px solid var(--line); }
+  .counter .n { font-size: 28px; font-weight: 800; color: var(--mint); }
+  .counter .l { color: var(--muted); font-size: 13px; }
+
+  section { padding: 0 0 96px; }
+  h2 { font-size: clamp(1.7rem, 3.4vw, 2.4rem); margin: 0 0 12px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); max-width: 40em; margin: 0 0 36px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+  .card h3 { margin: 14px 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .ico { width: 40px; height: 40px; border-radius: 10px; background: rgba(52,211,153,.12); display: grid; place-items: center; }
+  .ico svg { width: 22px; height: 22px; fill: var(--mint); }
+
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: s; }
+  .flow .card { position: relative; }
+  .flow .card::before { counter-increment: s; content: "0" counter(s); font: 500 13px "JetBrains Mono", monospace; color: var(--mint); }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  ul.check, ul.cross { list-style: none; margin: 0; padding: 0; }
+  ul.check li, ul.cross li { padding: 10px 0 10px 30px; position: relative; color: var(--muted); border-top: 1px solid var(--line); font-size: 15px; }
+  ul.check li:first-child, ul.cross li:first-child { border-top: 0; }
+  ul.check li::before, ul.cross li::before { position: absolute; left: 0; top: 10px; font-weight: 700; }
+  ul.check li::before { content: "✓"; color: var(--mint); }
+  ul.cross li::before { content: "✕"; color: var(--red); }
+  li b { color: var(--text); font-weight: 600; }
+
+  ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 12px; }
+  ol.steps li { counter-increment: s; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px 16px 64px; position: relative; color: var(--muted); }
+  ol.steps li::before { content: counter(s); position: absolute; left: 20px; top: 14px; width: 28px; height: 28px; border-radius: 8px; background: var(--mint); color: #062A1E;
+    display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0 20px; margin-bottom: 10px; }
+  summary { cursor: pointer; padding: 16px 0; font-weight: 600; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; float: right; color: var(--mint); font-weight: 700; }
+  details[open] summary::after { content: "−"; }
+  details p { margin: 0 0 16px; color: var(--muted); }
+
+  .final { text-align: center; background: linear-gradient(180deg, var(--bg2), var(--bg)); border: 1px solid var(--line); border-radius: 24px; padding: 56px 24px; }
+  .final .ctas { justify-content: center; }
+  footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; padding: 28px 0 48px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
+  footer a { color: var(--muted); }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; padding-top: 48px; }
+    .art { order: -1; }
+    .art svg { width: 160px; border-radius: 32px; }
+    .grid, .flow, .split { grid-template-columns: 1fr; }
+    .counter { grid-template-columns: 1fr 1fr; }
+    .counter div:nth-child(3) { border-left: 0; }
+    .counter div:nth-child(n+3) { border-top: 1px solid var(--line); }
+    .links a.hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0F172A"/><path fill="#34D399" d="M192 192h640v192h-640zM192 384h128v128h-128zM704 384h128v128h-128zM192 512h640v64h-640zM256 576h512v64h-512zM320 640h384v64h-384zM384 704h256v64h-256zM448 768h128v64h-128z"/></symbol>
+    <symbol id="dl" viewBox="0 0 24 24"><path fill="currentColor" d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></symbol>
+  </defs>
+</svg>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><svg class="pixel"><use href="#logo"/></svg>NetShield</a>
+    <div class="links">
+      <a class="hide-sm" href="#features">Features</a>
+      <a class="hide-sm" href="#how">How it works</a>
+      <a class="hide-sm" href="#faq">FAQ</a>
+      <a href="https://github.com/its-ash/netshield">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <span class="eyebrow">Free · Open source · No account</span>
+      <h1>Ads gone.<br>In <em>every</em> app.</h1>
+      <p class="lead">NetShield blocks ads, trackers and malware across your whole Android phone. A private DNS filter runs on the phone itself, so nothing is sent to a VPN server and your speed stays the same.</p>
+      <div class="ctas">
+        <a class="btn primary download" href="https://github.com/its-ash/netshield/releases/latest/download/netshield.apk"><svg><use href="#dl"/></svg>Download APK</a>
+        <a class="btn" href="https://store.itsash.in/">Get it in Ash Store</a>
+      </div>
+      <div class="meta">Version <b id="ver">latest</b><span id="size-wrap" hidden> · <b id="size"></b></span> · Android 8.0 or newer</div>
+    </div>
+    <div class="art"><svg class="pixel" viewBox="0 0 1024 1024"><use href="#logo"/></svg></div>
+  </header>
+
+  <div class="counter">
+    <div><div class="n">1M+</div><div class="l">ad, tracker and malware domains</div></div>
+    <div><div class="n">0</div><div class="l">bytes of your traffic sent to a server</div></div>
+    <div><div class="n">Every</div><div class="l">app and browser covered</div></div>
+    <div><div class="n">Per app</div><div class="l">log of who asked for what</div></div>
+  </div>
+
+  <section id="features">
+    <h2>Blocking that doesn't let up</h2>
+    <p class="sub">The strongest public blocklists, on by default, plus the tricks that stop apps from sneaking around them.</p>
+    <div class="grid">
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM4 12a8 8 0 0 1 12.9-6.3L5.7 16.9A7.9 7.9 0 0 1 4 12zm8 8a7.9 7.9 0 0 1-4.9-1.7L18.3 7.1A8 8 0 0 1 12 20z"/></svg></div>
+        <h3>Whole-phone ad blocking</h3><p>Banner, pop-up and video ad networks are blocked in games, apps and every browser, not just one.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 5h18v2H3zm0 6h18v2H3zm0 6h12v2H3z"/></svg></div>
+        <h3>The best lists, built in</h3><p>HaGeZi Multi Pro++, OISD Big and AdGuard DNS, refreshed every 3 days. Your phone brand's telemetry list turns on by itself.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.7 7.6 1 12c1.7 4.4 6 7.5 11 7.5s9.3-3.1 11-7.5c-1.7-4.4-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg></div>
+        <h3>Hidden trackers caught</h3><p>Sites that disguise a tracker under their own name (CNAME cloaking) are unmasked and blocked.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5l-9-4zm-1 15-4-4 1.4-1.4 2.6 2.6 5.6-5.6L18 9l-7 7z"/></svg></div>
+        <h3>No sneaking around it</h3><p>Apps that hard-code Google or Cloudflare DNS, or use their own encrypted DNS, are caught and pushed back through NetShield.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zm9 0h7v7h-7zM4 13h7v7H4zm9 0h7v7h-7z"/></svg></div>
+        <h3>See every app</h3><p>A live log shows each request with the app that made it. Block or allow a domain everywhere, or only in that one app.</p></div>
+      <div class="card"><div class="ico"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6A5 5 0 0 0 7 6v2H6a2 2 0 0 0-2 2v10c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6z"/></svg></div>
+        <h3>Private by design</h3><p>Filtering happens on the phone. Allowed requests leave encrypted (DNS over HTTPS) to AdGuard, Cloudflare, Quad9 or Google: your pick.</p></div>
+    </div>
+  </section>
+
+  <section id="how">
+    <h2>How it works</h2>
+    <p class="sub">NetShield uses Android's VPN switch only to see DNS, the "phone book" lookups every app makes before it loads anything.</p>
+    <div class="flow">
+      <div class="card"><h3>An app asks</h3><p>An app wants to load <b>ads.example.com</b> and asks for its address.</p></div>
+      <div class="card"><h3>NetShield checks</h3><p>Your rules first, then over a million known ad and tracker domains, in microseconds.</p></div>
+      <div class="card"><h3>Ad? Dead end.</h3><p>Blocked names get an empty answer, so the ad never downloads and never shows.</p></div>
+      <div class="card"><h3>Everything else flows</h3><p>Normal requests are answered over encrypted DNS. The rest of your traffic never touches NetShield.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Honest about the limits</h2>
+    <p class="sub">DNS blocking is fast and battery friendly, but some ads can't be separated from the content they come with.</p>
+    <div class="split">
+      <div class="card"><h3>Blocks</h3>
+        <ul class="check">
+          <li><b>In-app ads</b> in games and free apps</li>
+          <li><b>Website ads</b> and pop-ups in every browser</li>
+          <li><b>Trackers and analytics</b>, including hidden ones</li>
+          <li><b>Phone telemetry</b> from Xiaomi, Samsung, OPPO, vivo, Huawei</li>
+          <li><b>Malware and phishing</b> domains</li>
+        </ul></div>
+      <div class="card"><h3>Can't block</h3>
+        <ul class="cross">
+          <li><b>YouTube, Instagram and Facebook ads</b>: they come from the same servers as the videos and posts</li>
+          <li>Anything while Android's <b>Private DNS</b> names a provider (NetShield tells you)</li>
+          <li>Running next to <b>another VPN</b>: Android allows only one at a time</li>
+        </ul></div>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>Install in a minute</h2>
+    <p class="sub">NetShield isn't on Google Play. Install it directly, or through Ash Store to get updates automatically.</p>
+    <ol class="steps">
+      <li>Tap <b>Download APK</b> on your Android phone.</li>
+      <li>Open the file. If Android asks, allow your browser to <b>install unknown apps</b>.</li>
+      <li>Open NetShield and tap <b>Turn on</b>. It downloads the blocklists and asks once for the VPN permission.</li>
+      <li>Optional: in Android's VPN settings, turn on <b>Always-on VPN</b> for NetShield to keep it on after a reboot.</li>
+    </ol>
+  </section>
+
+  <section id="faq">
+    <h2>Questions</h2>
+    <details><summary>Is it a real VPN? Does my traffic go to a server?</summary>
+      <p>No. NetShield uses Android's VPN feature only to see DNS lookups on your phone. Your browsing goes straight to the internet as usual. Only allowed lookups leave the phone, encrypted, to the DNS provider you choose.</p></details>
+    <details><summary>Will it slow my phone or drain the battery?</summary>
+      <p>No noticeable effect. Only tiny DNS packets pass through NetShield, and blocked ads mean pages and apps load less.</p></details>
+    <details><summary>An app or site broke. What do I do?</summary>
+      <p>Open the query log, find the blocked request from that app and tap <b>Allow</b>, everywhere or only in that app. If an app refuses to work behind any VPN (some banking apps), let it skip NetShield in Settings.</p></details>
+    <details><summary>Why does Android show a key icon?</summary>
+      <p>Android shows the key for every app that uses the VPN feature. With NetShield it only means DNS is being filtered on the phone.</p></details>
+    <details><summary>Does it collect any data?</summary>
+      <p>No account, no analytics, no ads. The query log stays on your phone. The code is open source on <a href="https://github.com/its-ash/netshield">GitHub</a>.</p></details>
+  </section>
+
+  <section>
+    <div class="final">
+      <h2>Take your phone back.</h2>
+      <p class="sub" style="margin: 0 auto 8px">Free forever. No account. No ads, obviously.</p>
+      <div class="ctas">
+        <a class="btn primary download" href="https://github.com/its-ash/netshield/releases/latest/download/netshield.apk"><svg><use href="#dl"/></svg>Download APK</a>
+        <a class="btn" href="https://store.itsash.in/">Get it in Ash Store</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span>NetShield is open source on <a href="https://github.com/its-ash/netshield">GitHub</a>. Built by <a href="https://itsash.in">itsash.in</a>.</span>
+    <span>Blocklists by HaGeZi, OISD, AdGuard and StevenBlack. Android is a trademark of Google LLC.</span>
+  </div>
+</footer>
+
+<script>
+  // Show the latest version and download size; the links already work without this.
+  fetch("https://api.github.com/repos/its-ash/netshield/releases/latest", { headers: { Accept: "application/vnd.github+json" } })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((rel) => {
+      if (!rel) return;
+      document.getElementById("ver").textContent = rel.tag_name.replace(/^v/, "");
+      const apk = (rel.assets || []).find((a) => a.name === "netshield.apk");
+      if (apk) {
+        document.getElementById("size").textContent = (apk.size / 1048576).toFixed(1) + " MB";
+        document.getElementById("size-wrap").hidden = false;
+      }
+    })
+    .catch(() => {});
+</script>
+</body>
+</html>

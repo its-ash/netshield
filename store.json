@@ -1,0 +1,11 @@
+{
+  "id": "netshield",
+  "name": "NetShield",
+  "repo": "its-ash/netshield",
+  "package": "com.itsash.netshield",
+  "tagline": "Block ads, trackers and malware in every app with a private on-phone DNS filter.",
+  "description": "NetShield blocks ads, trackers and malware for the whole phone. It runs a local DNS-only VPN: only DNS requests pass through it, so your speed and battery are not affected and your traffic never leaves for a VPN server. Requests are checked against strong blocklists (HaGeZi Pro++, OISD Big, AdGuard DNS) and your own rules, hidden CNAME trackers are caught, and apps that try to skip it with their own DNS are stopped. See every request with the app that made it, block or allow a domain everywhere or just for one app, and let apps that break skip NetShield. Allowed requests go out encrypted over DNS-over-HTTPS.",
+  "category": "Privacy",
+  "icon": "assets/icon/logo-1024.png",
+  "homepage": "https://netshield.itsash.in/"
+}
