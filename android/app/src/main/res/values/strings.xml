@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_description">Protection on or off, ads blocked today, and a switch.</string>
+    <string name="widget_state_on">Protected</string>
+    <string name="widget_state_off">Off</string>
+    <string name="widget_blocked">%1$s blocked today</string>
+    <string name="widget_of_total">of %1$s requests</string>
+    <string name="widget_turn_on">Turn on</string>
+    <string name="widget_turn_off">Turn off</string>
+</resources>

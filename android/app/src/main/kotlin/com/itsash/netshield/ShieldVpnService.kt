@@ -115,6 +115,7 @@ class ShieldVpnService : VpnService() {
             if (tun == null) return
             TodayStats.save(prefs)
             notifyManager().notify(NOTE_ID, notification())
+            NetShieldWidget.updateThrottled(this@ShieldVpnService)
             main.postDelayed(this, 15_000)
         }
     }
@@ -159,6 +160,7 @@ class ShieldVpnService : VpnService() {
         work.shutdownNow()
         main.removeCallbacksAndMessages(null)
         refreshTile()
+        NetShieldWidget.updateAll(this)
         super.onDestroy()
     }
 
@@ -170,6 +172,7 @@ class ShieldVpnService : VpnService() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         refreshTile()
+        NetShieldWidget.updateAll(this)
     }
 
     /** New rules or upstream: applies at once, no reconnect. */
@@ -251,6 +254,7 @@ class ShieldVpnService : VpnService() {
             main.removeCallbacks(tick)
             main.postDelayed(tick, 15_000)
             refreshTile()
+            NetShieldWidget.updateAll(this)
         }
         if (!lists.ready || lists.stale) {
             try {

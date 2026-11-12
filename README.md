@@ -15,6 +15,7 @@ Block ads, trackers and malware in every app with a private on-phone DNS filter.
 - **Your rules win**: always-block and always-allow lists, plus rules for a single app.
 - **Skip an app**: apps that break (some banking apps) can go around NetShield.
 - **Encrypted upstream**: allowed requests go out over DNS-over-HTTPS to AdGuard DNS (default), Cloudflare, Quad9 or Google.
+- **Home-screen widget**: protection state, requests blocked today and an On/Off button.
 - **Quick Settings tile**, start after reboot, and Android's Always-on VPN.
 
 ## What it cannot block

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Home-screen widget palette (light). values-night/colors.xml has the dark one. -->
+<resources>
+    <!-- Values match the theme package's UiColors.light (default accent; NetShield sets none). -->
+    <color name="widget_bg">#FFFFFFFF</color>
+    <color name="widget_text">#FF111114</color>
+    <color name="widget_muted">#FF55555F</color>
+    <color name="widget_accent">#FF4F46E5</color>
+    <color name="widget_on_accent">#FFFFFFFF</color>
+    <color name="widget_off">#FF55555F</color>
+</resources>

@@ -52,7 +52,7 @@ rest goes to a DNS-over-HTTPS upstream. Flutter is only the UI.
     `DnsFilter`, `QueryLog`, `DnsCache`), `Upstream.kt`.
   - Android: `ShieldVpnService.kt`, `Prefs.kt` (`ShieldPrefs`, `TodayStats`,
     `ListCatalog`, `ListManager`, `AppNames`), `SystemHooks.kt` (`BootReceiver`,
-    `ShieldTileService`), `MainActivity.kt` (MethodChannel `com.itsash.netshield/shield`).
+    `ShieldTileService`), `NetShieldWidget.kt` (home-screen widget: On/Off, blocked and total today, toggle button; reads `ShieldVpnService.running` + `TodayStats`, pushed by the service on start/stop and every 30 s via `updateThrottled`; toggle reuses `ShieldVpnService.start/stop`, opens the app if VPN consent is missing), `MainActivity.kt` (MethodChannel `com.itsash.netshield/shield`).
 - `lib/shield/shield_platform.dart`: models + channel. `Verdict` indexes must match
   `Verdict` in `Filter.kt`; `Upstream` keys must match `UpstreamProvider`.
 - `lib/shield/shield_store.dart`: polls status + log every 2 s while a screen

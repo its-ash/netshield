@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Values match the theme package's UiColors.dark. -->
+    <color name="widget_bg">#FF151519</color>
+    <color name="widget_text">#FFF5F5F7</color>
+    <color name="widget_muted">#FFA6A6B0</color>
+    <color name="widget_accent">#FF818CF8</color>
+    <color name="widget_on_accent">#FF0C0C0F</color>
+    <color name="widget_off">#FFA6A6B0</color>
+</resources>
