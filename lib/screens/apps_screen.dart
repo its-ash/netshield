@@ -87,7 +87,7 @@ class _AppsScreenState extends State<AppsScreen> {
                           a.label,
                           subtitle:
                               '${UiFormat.compact(a.queries)} requests · ${UiFormat.compact(a.blocked)} blocked'
-                              '${a.bypass ? ' · skips NetShield' : ''}',
+                              '${a.bypass ? ' · skips NetShield' : (a.trusted ? ' · trusted' : '')}',
                           leading: AppIcon(a.app),
                           trailing: UiStatusPill(
                             '${a.queries == 0 ? 0 : (a.blocked * 100 / a.queries).round()}%',
@@ -125,6 +125,7 @@ class AppDetailScreen extends StatefulWidget {
 class _AppDetailScreenState extends State<AppDetailScreen> {
   AppRules _rules = const AppRules(label: '', allow: [], block: []);
   bool? _bypass;
+  bool? _trusted;
 
   ShieldPlatform get platform => widget.store.platform;
 
@@ -146,10 +147,21 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     if (!mounted) return;
     setState(() => _rules = r.apps[widget.app] ?? const AppRules(label: '', allow: [], block: []));
     if (_bypass == null) {
-      // Read once; after that the switch keeps its own state.
-      var b = (await platform.appStats()).where((s) => s.app == widget.app).firstOrNull?.bypass;
-      b ??= (await platform.installedApps()).where((a) => a.app == widget.app).firstOrNull?.bypass;
-      if (mounted) setState(() => _bypass = b ?? false);
+      // Read once; after that the switches keep their own state.
+      final stat = (await platform.appStats()).where((s) => s.app == widget.app).firstOrNull;
+      var b = stat?.bypass;
+      var t = stat?.trusted;
+      if (stat == null) {
+        final app = (await platform.installedApps()).where((a) => a.app == widget.app).firstOrNull;
+        b = app?.bypass;
+        t = app?.trusted;
+      }
+      if (mounted) {
+        setState(() {
+          _bypass = b ?? false;
+          _trusted = t ?? false;
+        });
+      }
     }
   }
 
@@ -158,6 +170,14 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
     await platform.setBypass(widget.app, on);
     if (mounted) {
       context.showToast(on ? '${widget.label} now skips NetShield.' : '${widget.label} is filtered again.');
+    }
+  }
+
+  Future<void> _setTrusted(bool on) async {
+    setState(() => _trusted = on);
+    await platform.setTrusted(widget.app, on);
+    if (mounted) {
+      context.showToast(on ? 'Nothing ${widget.label} asks for is blocked now.' : '${widget.label} is filtered again.');
     }
   }
 
@@ -217,8 +237,16 @@ class _AppDetailScreenState extends State<AppDetailScreen> {
                 ],
               ),
               UiListGroup(
-                footer: 'Use this when the app breaks with NetShield on. Its requests are not filtered at all.',
+                footer: 'Use these when the app breaks with NetShield on (for example calls that do not connect). '
+                    'Trust keeps the query log and your rules for this app; skipping takes it out of NetShield completely.',
                 children: [
+                  UiSwitchTile(
+                    'Trust this app',
+                    subtitle: 'Allow every request it makes',
+                    icon: Icons.verified_user_rounded,
+                    value: _trusted ?? false,
+                    onChanged: _trusted == null || (_bypass ?? false) ? null : _setTrusted,
+                  ),
                   UiSwitchTile(
                     'Skip NetShield for this app',
                     icon: Icons.alt_route_rounded,

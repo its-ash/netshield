@@ -24,8 +24,13 @@ rest goes to a DNS-over-HTTPS upstream. Flutter is only the UI.
   blocked answer, or cache / upstream. CNAME uncloaking: if any CNAME in an allowed
   answer is blocked, the answer becomes a blocked one (`BLOCKED_CNAME`). Upstream
   0.0.0.0 answers are logged as `BLOCKED_UPSTREAM`.
-- Rule order (`Filter.kt`): app allow > app block > global allow > global block >
-  list exceptions (`@@`) > lists. User rules cover subdomains.
+- Rule order (`Filter.kt`): app allow > app block > trusted app > global allow >
+  global block > built-in WhatsApp domains > list exceptions (`@@`) > lists. User
+  rules cover subdomains. Trusted apps (`ShieldPrefs.trusted`, default
+  `TrustedApps.DEFAULT` = WhatsApp + WhatsApp Business, so lists cannot break calls)
+  get `ALLOWED_TRUSTED` and skip CNAME uncloaking. `TrustedApps.DOMAINS`
+  (whatsapp.net/.com/.biz, wa.me) pass for every request, since the shared DNS cache
+  and uid 1051 can hide that WhatsApp asked.
 - Foreground `specialUse` service, `START_STICKY`, Always-on VPN supported
   (`SUPPORTS_ALWAYS_ON`), `BootReceiver` restarts it when `enabled`, `onRevoke`
   turns `enabled` off. Notification shows today's counts (`TodayStats`), tick 15 s.
@@ -57,8 +62,8 @@ rest goes to a DNS-over-HTTPS upstream. Flutter is only the UI.
   `Verdict` in `Filter.kt`; `Upstream` keys must match `UpstreamProvider`.
 - `lib/shield/shield_store.dart`: polls status + log every 2 s while a screen
   `watch()`es it.
-- `lib/screens/`: home (toggle, warnings, stats), log, apps + app detail (bypass,
-  app rules, top domains), lists, rules, settings, bypass picker.
+- `lib/screens/`: home (toggle, warnings, stats), log, apps + app detail (trust,
+  bypass, app rules, top domains), lists, rules, settings, bypass picker.
 
 ## Commands
 

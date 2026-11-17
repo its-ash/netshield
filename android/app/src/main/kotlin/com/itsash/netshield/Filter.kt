@@ -12,6 +12,7 @@ object Verdict {
     const val BLOCKED_UPSTREAM = 5
     const val ALLOWED_RULE = 6
     const val ERROR = 7
+    const val ALLOWED_TRUSTED = 8
 
     fun blocked(v: Int) = v in BLOCKED_LIST..BLOCKED_UPSTREAM
 }
@@ -25,6 +26,8 @@ class UserRules(
     val block: Set<String> = emptySet(),
     val appAllow: Map<String, Set<String>> = emptyMap(),
     val appBlock: Map<String, Set<String>> = emptyMap(),
+    /** Packages whose requests are never blocked by lists or global rules. */
+    val trusted: Set<String> = emptySet(),
 ) {
     companion object {
         /** Lowercase, no scheme, path, port, "*." or trailing dot. Null when it is not a domain. */
@@ -53,9 +56,25 @@ class UserRules(
 }
 
 /**
- * Decides one name. Order: the app's allow, the app's block, your allow,
- * your block, list exceptions, lists. So a rule you made always wins over the
- * lists, and an app rule wins over a global one.
+ * Apps that blocklists break in ways users cannot fix one domain at a time:
+ * WhatsApp calls fail when a list blocks one of Meta's call or relay names.
+ */
+object TrustedApps {
+    /** Trusted until the user turns it off for the app. */
+    val DEFAULT = setOf("com.whatsapp", "com.whatsapp.w4b")
+
+    /**
+     * WhatsApp's own domains, allowed for every request: Android's shared DNS
+     * cache and its resolver (uid 1051) can hide that a lookup came from WhatsApp.
+     */
+    val DOMAINS = setOf("whatsapp.net", "whatsapp.com", "whatsapp.biz", "wa.me")
+}
+
+/**
+ * Decides one name. Order: the app's allow, the app's block, a trusted app,
+ * your allow, your block, built-in WhatsApp domains, list exceptions, lists.
+ * So a rule you made always wins over the lists, and an app rule wins over a
+ * global one.
  */
 class DnsFilter(
     @Volatile var lists: Blocklist = Blocklist.EMPTY,
@@ -67,9 +86,11 @@ class DnsFilter(
         if (pkg != null) {
             if (UserRules.suffixIn(r.appAllow[pkg], d)) return Verdict.ALLOWED_RULE
             if (UserRules.suffixIn(r.appBlock[pkg], d)) return Verdict.BLOCKED_APP_RULE
+            if (pkg in r.trusted) return Verdict.ALLOWED_TRUSTED
         }
         if (UserRules.suffixIn(r.allow, d)) return Verdict.ALLOWED_RULE
         if (UserRules.suffixIn(r.block, d)) return Verdict.BLOCKED_RULE
+        if (UserRules.suffixIn(TrustedApps.DOMAINS, d)) return Verdict.ALLOWED_TRUSTED
         return if (lists.match(d) == Blocklist.BLOCK) Verdict.BLOCKED_LIST else Verdict.ALLOWED
     }
 }

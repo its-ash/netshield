@@ -302,6 +302,26 @@ class CoreTest {
         assertEquals(Verdict.BLOCKED_APP_RULE, f.decide("social.com", "com.bank"))
     }
 
+    @Test
+    fun trustedAppsAndWhatsAppDomainsAreAllowed() {
+        val f = DnsFilter(
+            build("||graph.facebook.com^\n||dit.whatsapp.net^\n||ads.net^"),
+            UserRules(
+                block = setOf("social.com"),
+                appBlock = mapOf("com.whatsapp" to setOf("ads.net")),
+                trusted = TrustedApps.DEFAULT,
+            ),
+        )
+        assertEquals(Verdict.ALLOWED_TRUSTED, f.decide("graph.facebook.com", "com.whatsapp"))
+        assertEquals(Verdict.ALLOWED_TRUSTED, f.decide("api.social.com", "com.whatsapp.w4b"))
+        assertEquals(Verdict.BLOCKED_APP_RULE, f.decide("x.ads.net", "com.whatsapp"))
+        assertEquals(Verdict.BLOCKED_LIST, f.decide("graph.facebook.com", "com.other"))
+        // WhatsApp's own domains pass even when the app is unknown.
+        assertEquals(Verdict.ALLOWED_TRUSTED, f.decide("dit.whatsapp.net", null))
+        assertEquals(Verdict.ALLOWED_TRUSTED, f.decide("g.whatsapp.net", "com.other"))
+        assertFalse(Verdict.blocked(Verdict.ALLOWED_TRUSTED))
+    }
+
     // ---- Log and cache ----
 
     @Test

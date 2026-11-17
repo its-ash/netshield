@@ -134,6 +134,7 @@ class MainActivity : FlutterActivity() {
             }
             "appStats" -> {
                 val bypass = prefs.bypass
+                val trusted = prefs.trusted
                 result.success(
                     ShieldVpnService.log.appCounts().map { (key, c) ->
                         mapOf(
@@ -142,6 +143,7 @@ class MainActivity : FlutterActivity() {
                             "queries" to c[0],
                             "blocked" to c[1],
                             "bypass" to (key in bypass),
+                            "trusted" to (key in trusted),
                         )
                     },
                 )
@@ -186,6 +188,7 @@ class MainActivity : FlutterActivity() {
             }
             "installedApps" -> async(result) {
                 val bypass = prefs.bypass
+                val trusted = prefs.trusted
                 @Suppress("DEPRECATION")
                 packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS)
                     .filter { it.packageName != packageName && it.requestedPermissions?.contains(Manifest.permission.INTERNET) == true }
@@ -195,6 +198,7 @@ class MainActivity : FlutterActivity() {
                             "label" to apps.label(p.packageName),
                             "system" to apps.isSystem(p.packageName),
                             "bypass" to (p.packageName in bypass),
+                            "trusted" to (p.packageName in trusted),
                         )
                     }
                     .sortedBy { (it["label"] as String).lowercase() }
@@ -204,6 +208,13 @@ class MainActivity : FlutterActivity() {
                 val on = call.argument<Boolean>("on")!!
                 prefs.bypass = if (on) prefs.bypass + pkg else prefs.bypass - pkg
                 ShieldVpnService.instance?.restart()
+                result.success(null)
+            }
+            "setTrusted" -> {
+                val pkg = call.argument<String>("app")!!
+                val on = call.argument<Boolean>("on")!!
+                prefs.trusted = if (on) prefs.trusted + pkg else prefs.trusted - pkg
+                applyRules()
                 result.success(null)
             }
             "appIcon" -> async(result) { apps.iconPng(call.argument<String>("app")!!, 96) }

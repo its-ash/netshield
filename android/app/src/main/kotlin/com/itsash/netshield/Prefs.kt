@@ -70,6 +70,11 @@ class ShieldPrefs(ctx: Context) {
         get() = set("bypass")
         set(v) = putSet("bypass", v)
 
+    /** Apps whose requests are never blocked. WhatsApp is trusted until the user turns it off. */
+    var trusted: Set<String>
+        get() = if (p.contains("trusted")) set("trusted") else TrustedApps.DEFAULT
+        set(v) = p.edit().putStringSet("trusted", HashSet(v)).apply() // kept even when empty
+
     fun rules(): UserRules {
         val appAllow = HashMap<String, Set<String>>()
         val appBlock = HashMap<String, Set<String>>()
@@ -79,7 +84,7 @@ class ShieldPrefs(ctx: Context) {
                 k.startsWith("app.block.") -> appBlock[k.removePrefix("app.block.")] = set(k)
             }
         }
-        return UserRules(set("rules.allow"), set("rules.block"), appAllow, appBlock)
+        return UserRules(set("rules.allow"), set("rules.block"), appAllow, appBlock, trusted)
     }
 
     private fun ruleKey(allow: Boolean, pkg: String?) =

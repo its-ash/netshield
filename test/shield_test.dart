@@ -9,6 +9,7 @@ void main() {
     expect(Verdict.of(5), Verdict.blockedUpstream);
     expect(Verdict.of(6), Verdict.allowedRule);
     expect(Verdict.of(7), Verdict.error);
+    expect(Verdict.of(8), Verdict.allowedTrusted);
     expect(Verdict.of(99), Verdict.allowed);
     expect([for (final v in Verdict.values) if (v.blocked) v.index], [1, 2, 3, 4, 5]);
   });

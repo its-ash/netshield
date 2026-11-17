@@ -9,7 +9,8 @@ enum Verdict {
   blockedCname('Blocked: hidden tracker'),
   blockedUpstream('Blocked by the DNS server'),
   allowedRule('Allowed by your rule'),
-  error('DNS server not reachable');
+  error('DNS server not reachable'),
+  allowedTrusted('Allowed: trusted app');
 
   const Verdict(this.label);
   final String label;
@@ -191,7 +192,14 @@ class ListInfo {
 }
 
 class AppStat {
-  const AppStat({required this.app, required this.label, required this.queries, required this.blocked, required this.bypass});
+  const AppStat({
+    required this.app,
+    required this.label,
+    required this.queries,
+    required this.blocked,
+    required this.bypass,
+    this.trusted = false,
+  });
 
   factory AppStat.fromMap(Map<Object?, Object?> m) => AppStat(
     app: m['app'] as String,
@@ -199,6 +207,7 @@ class AppStat {
     queries: (m['queries'] as num?)?.toInt() ?? 0,
     blocked: (m['blocked'] as num?)?.toInt() ?? 0,
     bypass: m['bypass'] as bool? ?? false,
+    trusted: m['trusted'] as bool? ?? false,
   );
 
   final String app;
@@ -206,6 +215,7 @@ class AppStat {
   final int queries;
   final int blocked;
   final bool bypass;
+  final bool trusted;
 
   bool get isPackage => app != 'unknown' && !app.startsWith('uid:');
 }
@@ -241,19 +251,27 @@ class Rules {
 }
 
 class InstalledApp {
-  const InstalledApp({required this.app, required this.label, required this.system, required this.bypass});
+  const InstalledApp({
+    required this.app,
+    required this.label,
+    required this.system,
+    required this.bypass,
+    this.trusted = false,
+  });
 
   factory InstalledApp.fromMap(Map<Object?, Object?> m) => InstalledApp(
     app: m['app'] as String,
     label: m['label'] as String? ?? m['app'] as String,
     system: m['system'] as bool? ?? false,
     bypass: m['bypass'] as bool? ?? false,
+    trusted: m['trusted'] as bool? ?? false,
   );
 
   final String app;
   final String label;
   final bool system;
   final bool bypass;
+  final bool trusted;
 }
 
 class UpdateResult {
@@ -329,6 +347,9 @@ class ShieldPlatform {
   ];
 
   Future<void> setBypass(String app, bool on) => _channel.invokeMethod('setBypass', {'app': app, 'on': on});
+
+  /// A trusted app's requests are never blocked by lists or global rules.
+  Future<void> setTrusted(String app, bool on) => _channel.invokeMethod('setTrusted', {'app': app, 'on': on});
 
   Future<Uint8List?> appIcon(String app) => _channel.invokeMethod<Uint8List>('appIcon', {'app': app});
 
