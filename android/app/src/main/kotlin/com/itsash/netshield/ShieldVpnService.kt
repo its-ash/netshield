@@ -92,6 +92,8 @@ class ShieldVpnService : VpnService() {
 
     @Volatile
     private var tun: ParcelFileDescriptor? = null
+    @Volatile
+    private var stopped = false
     private var wakeRead: FileDescriptor? = null
     private var wakeWrite: FileDescriptor? = null
     private var reader: Thread? = null
@@ -140,6 +142,7 @@ class ShieldVpnService : VpnService() {
             shutdown()
             return START_NOT_STICKY
         }
+        stopped = false
         prefs.enabled = true
         work.execute { startVpn() }
         return START_STICKY
@@ -153,6 +156,7 @@ class ShieldVpnService : VpnService() {
     }
 
     override fun onDestroy() {
+        stopped = true
         closeTun()
         if (instance === this) instance = null
         TodayStats.save(prefs)
@@ -166,6 +170,7 @@ class ShieldVpnService : VpnService() {
 
     /** Stops the tunnel and the service. */
     fun shutdown() {
+        stopped = true
         closeTun()
         if (instance === this) instance = null
         TodayStats.save(prefs)
@@ -198,7 +203,7 @@ class ShieldVpnService : VpnService() {
 
     @Synchronized
     private fun startVpn() {
-        if (tun != null) return
+        if (stopped || tun != null) return
         filter.lists = lists.load()
         reloadRules()
         val b = Builder()
@@ -231,6 +236,7 @@ class ShieldVpnService : VpnService() {
         b.setConfigureIntent(
             PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE),
         )
+        if (stopped) return
         val fd = try {
             b.establish()
         } catch (e: Exception) {
@@ -240,6 +246,10 @@ class ShieldVpnService : VpnService() {
         if (fd == null) {
             if (lastError == null) lastError = "Android refused the VPN. Allow NetShield in VPN settings."
             main.post { shutdown() }
+            return
+        }
+        if (stopped) {
+            runCatching { fd.close() }
             return
         }
         val pipe = Os.pipe()
@@ -256,7 +266,7 @@ class ShieldVpnService : VpnService() {
             refreshTile()
             NetShieldWidget.updateAll(this)
         }
-        if (!lists.ready || lists.stale) {
+        if (!stopped && (!lists.ready || lists.stale)) {
             try {
                 lists.update(force = false)
                 reloadLists()
@@ -265,13 +275,16 @@ class ShieldVpnService : VpnService() {
         }
     }
 
+    @Synchronized
     private fun closeTun() {
         val fd = tun ?: return
         tun = null
         wakeWrite?.let { runCatching { Os.write(it, byteArrayOf(1), 0, 1) } }
         reader?.join(1000)
         reader = null
-        runCatching { fd.close() }
+        synchronized(writeLock) {
+            runCatching { fd.close() }
+        }
         wakeRead?.let { runCatching { Os.close(it) } }
         wakeWrite?.let { runCatching { Os.close(it) } }
         wakeRead = null
@@ -404,6 +417,7 @@ class ShieldVpnService : VpnService() {
     private fun write(p: ByteArray) {
         val fd = tun ?: return
         synchronized(writeLock) {
+            if (tun !== fd) return
             try {
                 Os.write(fd.fileDescriptor, p, 0, p.size)
             } catch (_: Exception) {

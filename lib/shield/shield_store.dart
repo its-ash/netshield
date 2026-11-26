@@ -17,12 +17,14 @@ class ShieldStore extends ChangeNotifier {
   /// Queries seen while the app was open, newest first.
   final List<LogEntry> log = [];
   int _lastId = 0;
+  int _logEpoch = 0;
 
   /// Turning on (downloading lists, asking for the VPN) or updating lists.
   bool busy = false;
 
   Timer? _timer;
   int _listeners = 0;
+  Future<void>? _refreshing;
 
   static const maxLog = 3000;
 
@@ -42,20 +44,23 @@ class ShieldStore extends ChangeNotifier {
     }
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh() => _refreshing ??= _runRefresh();
+
+  Future<void> _runRefresh() async {
+    final epoch = _logEpoch;
     try {
       status = await platform.status();
       var fresh = await platform.log(after: _lastId);
       if (fresh.isEmpty && _lastId > 0) {
         // The app process restarted: the service's ids start again from 1.
         final newest = await platform.log(limit: 1);
-        if (newest.isNotEmpty && newest.first.id < _lastId) {
+        if (newest.isNotEmpty && newest.first.id < _lastId && epoch == _logEpoch) {
           log.clear();
           _lastId = 0;
           fresh = await platform.log();
         }
       }
-      if (fresh.isNotEmpty) {
+      if (epoch == _logEpoch && fresh.isNotEmpty) {
         _lastId = fresh.first.id;
         log.insertAll(0, fresh);
         if (log.length > maxLog) log.removeRange(maxLog, log.length);
@@ -64,6 +69,8 @@ class ShieldStore extends ChangeNotifier {
       // Keep the last known state.
     } on MissingPluginException {
       // Tests and non-Android hosts.
+    } finally {
+      _refreshing = null;
     }
     notifyListeners();
   }
@@ -115,6 +122,7 @@ class ShieldStore extends ChangeNotifier {
 
   Future<void> clearLog() async {
     await platform.clearLog();
+    _logEpoch++;
     log.clear();
     notifyListeners();
   }

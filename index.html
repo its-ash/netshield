@@ -31,7 +31,7 @@
   nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
   .brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 700; font-size: 18px; }
   .brand:hover { text-decoration: none; }
-  .brand svg { width: 30px; height: 30px; border-radius: 7px; }
+  .brand img { width: 30px; height: 30px; border-radius: 7px; display: block; }
   .links { display: flex; gap: 22px; font-size: 14px; }
   .links a { color: var(--muted); }
   .links a:hover { color: var(--text); text-decoration: none; }
@@ -51,7 +51,7 @@
   .meta { margin-top: 16px; color: var(--muted); font-size: 13px; }
   .meta b { color: var(--text); font-weight: 600; }
   .art { display: grid; place-items: center; }
-  .art svg { width: min(340px, 80%); height: auto; border-radius: 48px; box-shadow: 0 30px 80px rgba(52,211,153,.18); }
+  .art img { width: min(340px, 80%); height: auto; border-radius: 48px; box-shadow: 0 30px 80px rgba(52,211,153,.18); display: block; }
 
   .counter { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-bottom: 96px; }
   .counter div { padding: 22px; background: var(--bg2); }
@@ -103,7 +103,7 @@
   @media (max-width: 860px) {
     .hero { grid-template-columns: 1fr; padding-top: 48px; }
     .art { order: -1; }
-    .art svg { width: 160px; border-radius: 32px; }
+    .art img { width: 160px; border-radius: 32px; }
     .grid, .flow, .split { grid-template-columns: 1fr; }
     .counter { grid-template-columns: 1fr 1fr; }
     .counter div:nth-child(3) { border-left: 0; }
@@ -116,14 +116,13 @@
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="logo" viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0F172A"/><path fill="#34D399" d="M192 192h640v192h-640zM192 384h128v128h-128zM704 384h128v128h-128zM192 512h640v64h-640zM256 576h512v64h-512zM320 640h384v64h-384zM384 704h256v64h-256zM448 768h128v64h-128z"/></symbol>
     <symbol id="dl" viewBox="0 0 24 24"><path fill="currentColor" d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></symbol>
   </defs>
 </svg>
 
 <nav>
   <div class="wrap">
-    <a class="brand" href="#"><svg class="pixel"><use href="#logo"/></svg>NetShield</a>
+    <a class="brand" href="#"><img src="assets/icon/logo-1024.png" alt="" width="30" height="30">NetShield</a>
     <div class="links">
       <a class="hide-sm" href="#features">Features</a>
       <a class="hide-sm" href="#how">How it works</a>
@@ -145,7 +144,7 @@
       </div>
       <div class="meta">Version <b id="ver">latest</b><span id="size-wrap" hidden> · <b id="size"></b></span> · Android 8.0 or newer</div>
     </div>
-    <div class="art"><svg class="pixel" viewBox="0 0 1024 1024"><use href="#logo"/></svg></div>
+    <div class="art"><img src="assets/icon/logo-1024.png" alt="NetShield app icon" width="340" height="340"></div>
   </header>
 
   <div class="counter">
